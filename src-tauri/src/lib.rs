@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use std::sync::Mutex;
+use tauri::Manager;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Game {
@@ -85,7 +86,7 @@ fn register_game(
 fn search_games(state: tauri::State<AppState>, query: String) -> Vec<Game> {
     let games = state.games.lock().unwrap();
     let query_lower = query.to_lowercase();
-    
+
     if query.trim().is_empty() {
         return Vec::new();
     }
@@ -94,7 +95,10 @@ fn search_games(state: tauri::State<AppState>, query: String) -> Vec<Game> {
         .iter()
         .filter(|game| {
             game.title.to_lowercase().contains(&query_lower)
-                || game.remarks.as_ref().map_or(false, |r| r.to_lowercase().contains(&query_lower))
+                || game
+                    .remarks
+                    .as_ref()
+                    .map_or(false, |r| r.to_lowercase().contains(&query_lower))
         })
         .cloned()
         .collect()
@@ -120,7 +124,7 @@ fn update_game(
     }
 
     let mut games = state.games.lock().unwrap();
-    
+
     if let Some(game) = games.iter_mut().find(|g| g.id == id) {
         game.title = title;
         game.remarks = remarks;
@@ -128,7 +132,7 @@ fn update_game(
         game.custom_fields = custom_fields;
         let updated_game = game.clone();
         drop(games);
-        
+
         state.save_games()?;
         Ok(updated_game)
     } else {
@@ -141,11 +145,11 @@ fn delete_game(state: tauri::State<AppState>, id: String) -> Result<(), String> 
     let mut games = state.games.lock().unwrap();
     let initial_len = games.len();
     games.retain(|g| g.id != id);
-    
+
     if games.len() == initial_len {
         return Err("Game not found".to_string());
     }
-    
+
     drop(games);
     state.save_games()?;
     Ok(())
@@ -153,18 +157,32 @@ fn delete_game(state: tauri::State<AppState>, id: String) -> Result<(), String> 
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let data_dir = dirs::data_dir()
-        .unwrap_or_else(|| PathBuf::from("."))
-        .join("plusy-gamedex");
-    
-    fs::create_dir_all(&data_dir).expect("Failed to create data directory");
-    let data_file = data_dir.join("games.json");
-    
-    let app_state = AppState::new(data_file);
-
     tauri::Builder::default()
+        .setup(|app| {
+            // App data directory
+            // macOS: Users/~user~/Library/Application Support/com.franzcrs.plusy-gamedex/
+            // Windows: Users/~user~/AppData/Roaming/com.franzcrs.plusy-gamedex/
+            // Linux: Users/~user~/.local/share/com.franzcrs.plusy-gamedex/
+            // Android: /data/user/0/com.plusy.gamedex/files
+            // iOS: ~/Library/Application Support/com.plusy.gamedex
+            let data_dir = app
+                .path()
+                .app_data_dir()
+                .expect("Failed to resolve app data directory");
+            println!("{}", data_dir.display());
+
+            if !data_dir.exists() {
+                fs::create_dir_all(&data_dir)?;
+            }
+
+            let data_file = data_dir.join("games.json");
+
+            let app_state = AppState::new(data_file);
+            app.manage(app_state);
+
+            Ok(())
+        })
         .plugin(tauri_plugin_opener::init())
-        .manage(app_state)
         .invoke_handler(tauri::generate_handler![
             greet,
             register_game,
