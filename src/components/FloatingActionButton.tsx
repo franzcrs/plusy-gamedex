@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 import "./FloatingActionButton.css";
 
 interface FloatingActionButtonProps {
@@ -9,7 +9,19 @@ interface FloatingActionButtonProps {
 export function FloatingActionButton({ onRegisterClick }: FloatingActionButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleMenu = () => {
+  useEffect(() => {
+    if (isOpen) {
+      const handleClickDocument = () => {
+        setIsOpen(false);
+      };
+
+      document.addEventListener('click', handleClickDocument);
+      return () => document.removeEventListener('click', handleClickDocument);
+    }
+  }, [isOpen]);
+
+  const toggleMenu = (event: React.MouseEvent) => {
+    event.stopPropagation();
     setIsOpen(!isOpen);
   };
 
@@ -19,7 +31,7 @@ export function FloatingActionButton({ onRegisterClick }: FloatingActionButtonPr
   };
 
   return (
-    <div className="fab-container">
+    <div id="root-fab" className="fab-container">
       {isOpen && (
         <div className="fab-menu">
           <button className="fab-menu-item" onClick={handleRegisterClick}>
@@ -27,8 +39,8 @@ export function FloatingActionButton({ onRegisterClick }: FloatingActionButtonPr
           </button>
         </div>
       )}
-      <button className="fab-main" onClick={toggleMenu} aria-label="Menu">
-        {isOpen ? <X size={24} /> : <Plus size={24} />}
+      <button className="fab-button icon-button" onClick={toggleMenu} aria-label="Menu">
+        <Plus size={38} style={{ transform: `rotate(${isOpen ? 45 : 0}deg)`, transition: 'transform 0.3s ease' }} />
       </button>
     </div>
   );

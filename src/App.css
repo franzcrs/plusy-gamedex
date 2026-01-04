@@ -3,8 +3,8 @@
   --primary-color: #C33974;
   --text-color: #211E1F;
   --text-color-opacity: rgba(33, 30, 31, 0.3);
-  --primary-color-opacity: rgba(195, 57, 116, 0.6);
-  --primary-color-focus: rgba(195, 57, 116, 0.15);
+  --primary-color-opacity: rgba(195, 57, 116, 0.05);
+  --primary-color-focus: rgba(195, 57, 117, 0.17);
   --background-color: #fefefe;
   --surface-color: #ffffff;
   --border-color: rgba(33, 30, 31, 0.15);
@@ -118,12 +118,13 @@ select {
   font-family: inherit;
   color: var(--text-color);
   background-color: var(--surface-color);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+  height: 44px;
   max-height: 44px;
+  min-width: 46px;
   box-sizing: border-box;
 }
 
@@ -134,7 +135,7 @@ textarea:focus,
 select:focus,
 [tabindex]:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px var(--primary-color-focus);
+  box-shadow: 0 0 0 4px var(--primary-color-focus);
 }
 
 button {
@@ -147,17 +148,19 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease, box-shadow 0.15s ease;
 }
 
 button:hover {
-  background-color: var(--primary-color-focus);
+  background-color: var(--primary-color-opacity);
   border-color: var(--primary-color);
   color: var(--primary-color);
+  transform: scale(1.02);
+  box-shadow: none;
 }
 
 button:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
+  transform: scale(0.96);
 }
 
 /* Specific input styling */
@@ -167,7 +170,8 @@ button:active {
 }
 
 .icon-button {
-  padding: 0.75rem;
+  padding: 0.25rem;
+  max-width: 46px;
 }
 
 /* Text selection */
@@ -208,7 +212,6 @@ button:active {
 
 /* Seamless transitions for all interactive elements */
 input,
-button,
 textarea,
 select,
 a {

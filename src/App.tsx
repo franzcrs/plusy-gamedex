@@ -77,8 +77,8 @@ function App() {
         </button>
       </form>
 
-      <SearchResults 
-        games={searchResults} 
+      <SearchResults
+        games={searchResults}
         isVisible={searchQuery.trim().length > 0}
       />
 

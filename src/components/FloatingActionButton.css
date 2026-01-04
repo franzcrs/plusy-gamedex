@@ -2,37 +2,27 @@
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  z-index: 1000;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 1rem;
 }
 
-.fab-main {
-  width: 56px;
-  height: 56px;
+.fab-button {
   border-radius: 50%;
-  background-color: var(--primary-color);
+  background-color: var(--text-color);
   color: white;
   border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: all 0.3s ease;
 }
 
-.fab-main:hover {
-  background-color: var(--primary-color);
+.fab-button:hover {
+  background-color: var(--text-color);
   transform: scale(1.1);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   color: white;
-}
-
-.fab-main:active {
-  transform: scale(0.95);
 }
 
 .fab-menu {
@@ -44,10 +34,7 @@
 
 .fab-menu-item {
   padding: 0.75rem 1.5rem;
-  background-color: var(--surface-color);
-  border: 1px solid var(--primary-color);
   border-radius: 24px;
-  color: var(--primary-color);
   font-weight: 500;
   white-space: nowrap;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -56,9 +43,9 @@
 }
 
 .fab-menu-item:hover {
-  background-color: var(--primary-color);
-  color: white;
-  transform: translateX(-4px);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transform: translateX(-6px);
 }
 
 @keyframes fadeInUp {
@@ -66,6 +53,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -78,8 +66,7 @@
     right: 1rem;
   }
 
-  .fab-main {
-    width: 48px;
+  .fab-button {
     height: 48px;
   }
 
