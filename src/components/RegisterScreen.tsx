@@ -27,8 +27,17 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
   useEffect(() => {
     if (isOpen) {
       loadGames();
+    } else {
+      initializeScreen();
     }
   }, [isOpen]);
+
+  const initializeScreen = () => {
+    setFormRows([{ id: 1, title: "", remarks: "", price: "" }]);
+    setIsLoading(false);
+    setIsRemoveMode(false);
+    setSelectedRows([]);
+  }
 
   const loadGames = async () => {
     try {
