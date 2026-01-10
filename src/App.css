@@ -9,6 +9,7 @@
   --surface-color: #ffffff;
   --border-color: rgba(33, 30, 31, 0.15);
   --border-hover: rgba(33, 30, 31, 0.25);
+  --checkbox-size: 20px;
 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
@@ -110,6 +111,7 @@ input,
 button,
 textarea,
 select {
+  margin: 0;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 0.75rem 1rem;
@@ -137,6 +139,34 @@ select:focus,
   border-color: var(--primary-color);
   box-shadow: 0 0 0 4px var(--primary-color-focus);
 }
+
+input:is([type="radio"], [type="checkbox"]) {
+  padding: 0px;
+  min-width: var(--checkbox-size);
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  cursor: pointer;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+input:is([type="radio"], [type="checkbox"]):active {
+  transform: scale(0.92);
+}
+
+input:is([type="radio"], [type="checkbox"]):checked {
+  border: none;
+  background-color: var(--primary-color);
+  /* SVG Tick */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E"),
+    /* Shine: A white overlay with low opacity on the top 50% */
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%);
+  background-repeat: no-repeat;
+  background-position: center;
+  /* First size is for tick, 'cover' is for shine */
+  background-size: 90% 90%, cover;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
 
 button {
   cursor: pointer;

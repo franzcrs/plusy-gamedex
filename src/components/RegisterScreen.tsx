@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Plus, Copy } from "lucide-react";
+import { X, Plus, Copy, Trash2, RotateCcw } from "lucide-react";
 import { gameService } from "../services/gameService";
 import { Game } from "../types/game";
 import { GameTable } from "./GameTable";
@@ -21,6 +21,8 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
   const [formRows, setFormRows] = useState<FormRow[]>([{ id: 1, title: "", remarks: "", price: "" }]);
   const [games, setGames] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRemoveMode, setIsRemoveMode] = useState(false);
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   useEffect(() => {
     if (isOpen) {
@@ -51,7 +53,7 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
   };
 
   const handleFieldChange = (id: number, field: keyof FormRow, value: string) => {
-    setFormRows(formRows.map(row => 
+    setFormRows(formRows.map(row =>
       row.id === id ? { ...row, [field]: value } : row
     ));
   };
@@ -77,6 +79,14 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
       alert("Failed to register games. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRemove = () => {
+    if (selectedRows.length > 0) {
+      setFormRows(formRows.filter(r => !selectedRows.includes(r.id)));
+      setSelectedRows([]);
+      setIsRemoveMode(false);
     }
   };
 
@@ -123,26 +133,45 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
             <h3>Add New Games</h3>
             <div className="form-rows">
               {formRows.map((row) => (
-                <div key={row.id} className="form-row">
-                  <input
-                    type="text"
-                    placeholder="Title *"
-                    value={row.title}
-                    onChange={(e) => handleFieldChange(row.id, "title", e.target.value)}
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Remarks"
-                    value={row.remarks}
-                    onChange={(e) => handleFieldChange(row.id, "remarks", e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Price"
-                    value={row.price}
-                    onChange={(e) => handleFieldChange(row.id, "price", e.target.value)}
-                  />
+                <div key={row.id} className={`form-row ${isRemoveMode ? 'remove-mode' : ''}`}>
+                  <div className={`form-row-checkbox ${isRemoveMode ? "remove-mode" : ""}`}>
+                    <input
+                      type="checkbox"
+                      name="remove-row"
+                      value={row.id}
+                      onChange={(e) => {
+                        const id = parseInt(e.target.value);
+                        setSelectedRows(prev =>
+                          prev.includes(id)
+                            ? prev.filter(r => r !== id)
+                            : [...prev, id]
+                        );
+                      }}
+                      checked={selectedRows.includes(row.id)}
+                      className={`checkbox-input ${isRemoveMode ? "display-checkbox" : ""}`}
+                    />
+                  </div>
+                  <div className="form-row-fields">
+                    <input
+                      type="text"
+                      placeholder="Title *"
+                      value={row.title}
+                      onChange={(e) => handleFieldChange(row.id, "title", e.target.value)}
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Remarks"
+                      value={row.remarks}
+                      onChange={(e) => handleFieldChange(row.id, "remarks", e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Price"
+                      value={row.price}
+                      onChange={(e) => handleFieldChange(row.id, "price", e.target.value)}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -151,20 +180,31 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
               <div className="divider-line"></div>
               <div className="divider-buttons">
                 <button
-                  className="icon-btn"
+                  className="action-btn icon-button"
                   onClick={handleAddRow}
                   title="Add new row"
                   aria-label="Add new row"
                 >
-                  <Plus size={20} />
+                  <Plus size={24} />
                 </button>
                 <button
-                  className="icon-btn"
+                  className="action-btn icon-button"
                   onClick={handleCopyRow}
                   title="Copy last row"
                   aria-label="Copy last row"
                 >
                   <Copy size={20} />
+                </button>
+                <button
+                  className="action-btn icon-button"
+                  onClick={() => {
+                    setIsRemoveMode(!isRemoveMode);
+                    setSelectedRows([]);
+                  }}
+                  title={isRemoveMode ? "Cancel remove" : "Remove row"}
+                  aria-label={isRemoveMode ? "Cancel remove" : "Remove row"}
+                >
+                  {isRemoveMode ? <RotateCcw size={24} /> : <Trash2 size={24} />}
                 </button>
               </div>
               <div className="divider-line"></div>
@@ -172,10 +212,12 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
 
             <button
               className="register-button"
-              onClick={handleRegister}
-              disabled={isLoading || !formRows.some(row => row.title.trim())}
+              onClick={isRemoveMode ? handleRemove : handleRegister}
+              disabled={isLoading ||
+                (!isRemoveMode && !formRows.some(row => row.title.trim())) ||
+                (isRemoveMode && (selectedRows.length === 0 || selectedRows.length === formRows.length))}
             >
-              {isLoading ? "Registering..." : "Register"}
+              {isRemoveMode ? "Remove" : isLoading ? "Registering..." : "Register"}
             </button>
           </div>
 
