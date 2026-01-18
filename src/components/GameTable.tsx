@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { Trash2, Check, X, Edit2 } from "lucide-react";
 import { Game } from "../types/game";
 import "./GameTable.css";
@@ -12,6 +12,8 @@ interface GameTableProps {
 export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Game | null>(null);
+  // FIXME: numActionButtons should be derived from an object or array representing the actions
+  const numActionButtons = 2;
 
   const startEdit = (game: Game) => {
     setEditingId(game.id);
@@ -36,6 +38,14 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
       onDelete(id);
     }
   };
+
+  useLayoutEffect(() => {
+    if (games.length === 0) return;
+    const root = document.documentElement.style;
+    // FIXME: Thes value below should be derived from the table structure dynamically
+    root.setProperty("--gt-num-cols", "3");
+    root.setProperty("--gt-num-action-buttons", `${numActionButtons}`);
+  }, [games]);
 
   if (games.length === 0) {
     return (
@@ -66,7 +76,7 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
                       type="text"
                       value={editForm.title}
                       onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                      className="table-input"
+                      className="table-input table-common-cell"
                     />
                   </td>
                   <td>
@@ -74,7 +84,7 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
                       type="text"
                       value={editForm.remarks || ""}
                       onChange={(e) => setEditForm({ ...editForm, remarks: e.target.value })}
-                      className="table-input"
+                      className="table-input table-common-cell"
                     />
                   </td>
                   <td>
@@ -82,7 +92,7 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
                       type="text"
                       value={editForm.price || ""}
                       onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
-                      className="table-input"
+                      className="table-input table-common-cell"
                     />
                   </td>
                   <td>
@@ -108,9 +118,21 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
                 </>
               ) : (
                 <>
-                  <td>{game.title}</td>
-                  <td>{game.remarks || "-"}</td>
-                  <td>{game.price || "-"}</td>
+                  <td>
+                    <p className="table-common-cell">
+                      {game.title}
+                    </p>
+                  </td>
+                  <td>
+                    <p className="table-common-cell">
+                      {game.remarks || "-"}
+                    </p>
+                  </td>
+                  <td>
+                    <p className="table-common-cell">
+                      {game.price || "-"}
+                    </p>
+                  </td>
                   <td>
                     <div className="action-buttons">
                       <button

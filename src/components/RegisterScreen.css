@@ -1,3 +1,7 @@
+:root {
+  --action-button-size: 36px;
+}
+
 .register-screen-overlay {
   position: fixed;
   top: 0;
@@ -175,8 +179,8 @@
 }
 
 .action-btn {
-  width: 36px;
-  height: 36px;
+  width: var(--action-button-size);
+  height: var(--action-button-size);
   padding: 0.5rem;
   border-radius: 50%;
   border: 1px solid var(--primary-color);
