@@ -1,0 +1,233 @@
+:root {
+  --action-button-size: 36px;
+}
+
+.register-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.register-screen-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.register-screen {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 90%;
+  max-width: 1200px;
+  height: 100vh;
+  background-color: var(--background-color);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  overflow: hidden;
+}
+
+.register-screen.open {
+  right: 0;
+}
+
+.register-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+}
+
+.register-header h2 {
+  margin: 0;
+  color: var(--text-color);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.close-button:hover {
+  background-color: var(--primary-color-focus);
+  color: var(--primary-color);
+}
+
+.register-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.registration-section,
+.games-table-section {
+  background-color: var(--surface-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.registration-section h3,
+.games-table-section h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+}
+
+.form-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.form-row-fields {
+  flex-basis: 100%;
+  flex-shrink: 1;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.form-row-checkbox {
+  display: flex;
+  align-items: center;
+  min-width: 0px;
+  width: 0px;
+  overflow: hidden;
+  transition: all 0.35s ease;
+  position: relative;
+}
+
+.form-row-checkbox.remove-mode {
+  min-width: calc(var(--checkbox-size) + 1rem);
+  width: calc(var(--checkbox-size) + 1rem);
+}
+
+.checkbox-input {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.checkbox-input.display-checkbox {
+  opacity: 1;
+}
+
+.checkbox-icon {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  border-radius: 6px;
+  color: var(--surface-color);
+}
+
+.checkbox-icon.display-icon {
+  opacity: 1;
+}
+
+.form-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-color);
+}
+
+.divider-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  width: var(--action-button-size);
+  height: var(--action-button-size);
+  padding: 0.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--primary-color);
+  background-color: var(--surface-color);
+  color: var(--primary-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: scale(1.1);
+}
+
+.register-button {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.register-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .register-screen {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .register-content {
+    padding: 1rem;
+  }
+
+  .registration-section,
+  .games-table-section {
+    padding: 1rem;
+  }
+}

@@ -3,12 +3,14 @@
   --primary-color: #C33974;
   --text-color: #211E1F;
   --text-color-opacity: rgba(33, 30, 31, 0.3);
-  --primary-color-opacity: rgba(195, 57, 116, 0.6);
-  --primary-color-focus: rgba(195, 57, 116, 0.15);
+  --primary-color-opacity: rgba(195, 57, 116, 0.05);
+  --primary-color-focus: rgba(195, 57, 117, 0.17);
   --background-color: #fefefe;
   --surface-color: #ffffff;
   --border-color: rgba(33, 30, 31, 0.15);
   --border-hover: rgba(33, 30, 31, 0.25);
+  --checkbox-size: 20px;
+  --elem-min-width: 46px;
 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
@@ -110,6 +112,7 @@ input,
 button,
 textarea,
 select {
+  margin: 0;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 0.75rem 1rem;
@@ -118,12 +121,13 @@ select {
   font-family: inherit;
   color: var(--text-color);
   background-color: var(--surface-color);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+  height: 44px;
   max-height: 44px;
+  min-width: var(--elem-min-width);
   box-sizing: border-box;
 }
 
@@ -134,8 +138,36 @@ textarea:focus,
 select:focus,
 [tabindex]:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px var(--primary-color-focus);
+  box-shadow: 0 0 0 4px var(--primary-color-focus);
 }
+
+input:is([type="radio"], [type="checkbox"]) {
+  padding: 0px;
+  min-width: var(--checkbox-size);
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  cursor: pointer;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+input:is([type="radio"], [type="checkbox"]):active {
+  transform: scale(0.92);
+}
+
+input:is([type="radio"], [type="checkbox"]):checked {
+  border: none;
+  background-color: var(--primary-color);
+  /* SVG Tick */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E"),
+    /* Shine: A white overlay with low opacity on the top 50% */
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%);
+  background-repeat: no-repeat;
+  background-position: center;
+  /* First size is for tick, 'cover' is for shine */
+  background-size: 90% 90%, cover;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
 
 button {
   cursor: pointer;
@@ -147,17 +179,31 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease, box-shadow 0.15s ease;
 }
 
 button:hover {
-  background-color: var(--primary-color-focus);
+  background-color: var(--primary-color-opacity);
   border-color: var(--primary-color);
   color: var(--primary-color);
+  transform: scale(1.02);
+  box-shadow: none;
 }
 
 button:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
+  transform: scale(0.96);
+}
+
+button[data-button-type="cancel"] {
+  background-color: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--surface-color);
+}
+
+button[data-button-type="cancel"]:hover {
+  background-color: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--surface-color);
 }
 
 /* Specific input styling */
@@ -167,7 +213,8 @@ button:active {
 }
 
 .icon-button {
-  padding: 0.75rem;
+  padding: 0.25rem;
+  max-width: var(--elem-min-width);
 }
 
 /* Text selection */
@@ -208,7 +255,6 @@ button:active {
 
 /* Seamless transitions for all interactive elements */
 input,
-button,
 textarea,
 select,
 a {
