@@ -194,6 +194,18 @@ button:active {
   transform: scale(0.96);
 }
 
+button[data-button-type="cancel"] {
+  background-color: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--surface-color);
+}
+
+button[data-button-type="cancel"]:hover {
+  background-color: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--surface-color);
+}
+
 /* Specific input styling */
 #search-input {
   width: 250px;

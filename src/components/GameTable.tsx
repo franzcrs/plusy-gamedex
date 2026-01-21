@@ -2,6 +2,7 @@ import { useLayoutEffect, useState } from "react";
 import { Trash2, Check, X, Edit2 } from "lucide-react";
 import { Game } from "../types/game";
 import "./GameTable.css";
+import CommonModal from "./CommonModal";
 
 interface GameTableProps {
   games: Game[];
@@ -12,6 +13,8 @@ interface GameTableProps {
 export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Game | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   // FIXME: numActionButtons should be derived from an object or array representing the actions
   const numActionButtons = 2;
 
@@ -34,9 +37,21 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this game?")) {
-      onDelete(id);
+    setDeleteId(id);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = () => {
+    if (deleteId) {
+      onDelete(deleteId);
     }
+    setShowDeleteDialog(false);
+    setDeleteId(null);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteDialog(false);
+    setDeleteId(null);
   };
 
   useLayoutEffect(() => {
@@ -58,6 +73,7 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
   return (
     <div className="game-table-container">
       <table className="game-table">
+        {/* FIXME: Render the table headers and column cells dynamically from an array */}
         <thead>
           <tr>
             <th>Title</th>
@@ -159,6 +175,15 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
           ))}
         </tbody>
       </table>
+      {showDeleteDialog &&
+        <CommonModal
+          title="Confirm Deletion"
+          message="Are you sure you want to delete this game? This action cannot be undone."
+          onCancel={cancelDelete}
+          onConfirm={confirmDelete}
+          confirmText="Delete"
+        />
+      }
     </div>
   );
 }
