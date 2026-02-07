@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 commit-msg.txt
 .env
+*.jks
+keystore.properties
