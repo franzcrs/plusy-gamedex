@@ -35,6 +35,9 @@
       "signingIdentity": "Apple Development: franz.chuquirachi@gmail.com (2VZFVC6GY2)",
       "hardenedRuntime": true,
       "entitlements": "./entitlements.plist"
+    },
+    "iOS": {
+      "developmentTeam": "Franz Arthur Chuquirachi Rosales (ID: BHK5X89CXD)"
     }
   }
 }
