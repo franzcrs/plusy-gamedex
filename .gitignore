@@ -26,3 +26,7 @@ commit-msg.txt
 .env
 *.jks
 keystore.properties
+
+# Mobile build files
+src-tauri/gen/android
+src-tauri/gen/apple
