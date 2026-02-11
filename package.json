@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "apk:install": "./install-apk.sh"
+    "apk:install": "sh ./install-apk.sh",
+    "xcode:update": "sh ./update-xcode.sh"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
