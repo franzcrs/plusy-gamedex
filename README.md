@@ -127,7 +127,7 @@ yarn tauri android build --apk true
     yarn run apk:install
     ```
 
-### Create a provisional iOS App (Not Signed for App Store) [Status: Tested]
+### Preview on iOS Device or Simulator [Status: Tested]
 
 **Create project files:**
 
@@ -144,7 +144,7 @@ yarn tauri icon
 
 **Try opening the .xcodeproj file:**
 
-If an error alert appears saying: "The project (...) cannot be opened because it is in a future Xcode project file format. (...)", change the number in the following line to the version compatible with your Xcode.app version. When the project opens, we are ready to continue.
+File is generated at `src-tauri/gen/apple/plusy-gamedex.xcodeproj`. If an error alert appears saying: "The project (...) cannot be opened because it is in a future Xcode project file format. (...)", change the number in the following line on file `src-tauri/gen/apple/plusy-gamedex.xcodeproj/project.pbxproj` to the version compatible with your Xcode.app version. When the project opens, we are ready to continue.
 
 ```
 objectVersion = 77;
@@ -152,15 +152,19 @@ objectVersion = 77;
 
 Reference: [Compatibility List](https://github.com/CocoaPods/Xcodeproj/blob/master/lib/xcodeproj/constants.rb#L134).
 
-**Build the provisional app:**
+**Run the app on a device or simulator:**
 
-In a terminal compatible with `.sh` scripts, run the following. The Xcode project should open.
+Once opened, select a valid Signing Team. Close the project.
+
+In a terminal compatible with `.sh` scripts, run the following. This runs the app in development mode — it connects to a Vite dev server on your Mac, so the server must remain running while the app is in use. 
+
+The Xcode project will open and the dev server will start in a separate terminal.
 
 ```
 yarn run xcode:update
 ```
 
-In Xcode, select the device to build the provisional app for, and click the Play button.
+Wait for the dev server to be ready, then in Xcode, select the target device and click the Play button.
 
 
 **Source:**

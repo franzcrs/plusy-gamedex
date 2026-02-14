@@ -1,10 +1,21 @@
 #!/bin/bash
 
-# 1. Check if adb exists in PATH
+# 1. Ensure ANDROID_HOME is set and adb is available
+if [ -z "$ANDROID_HOME" ]; then
+    ANDROID_HOME="$HOME/Library/Android/sdk"
+fi
+
+if [ ! -d "$ANDROID_HOME" ]; then
+    echo "❌ Error: Android SDK not found at $ANDROID_HOME"
+    echo "💡 Complete the prerequisites installation: https://v2.tauri.app/start/prerequisites/"
+    exit 1
+fi
+
+export PATH="$ANDROID_HOME/platform-tools:$PATH"
+
 if ! command -v adb &> /dev/null; then
-    echo "❌ Error: adb command not found."
-    echo "💡 You need to install Android Studio SDK Platform tools and register them in the PATH."
-    echo "Check your ~/.zshrc for: export PATH=\"\$PATH:~/Library/Android/sdk/platform-tools\""
+    echo "❌ Error: adb not found in $ANDROID_HOME/platform-tools"
+    echo "💡 Install Android SDK Platform-Tools via Android Studio's SDK Manager"
     exit 1
 fi
 

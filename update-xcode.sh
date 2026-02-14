@@ -34,7 +34,7 @@ if [ -f "$PBXPROJ" ]; then
     # 4. We use \\\" for quotes that need to stay escaped in the pbxproj file.
     # 5. We use \\\\. for the double backslash required before the dot.
     
-    NEW_SCRIPT='# Clear any restricted PATH and add common dev paths\\nexport PATH=\\\"\$PATH:/opt/homebrew/bin:/usr/local/bin:\$HOME/.cargo/bin\\\"\\n\\n# If you use NVM for node, add this too:\\n[ -s \\\"\$HOME/.nvm/nvm.sh\\\" ] \&\& \\\\. \\\"\$HOME/.nvm/nvm.sh\\\"\\n\\n# Ensure the architecture is set correctly for Rust\\n# export ARCHS=\\\"arm64\\\"\\n\\n# Development build\\n# In project directory first run: yarn tauri ios dev\\nyarn tauri ios xcode-script -v --platform \${PLATFORM_DISPLAY_NAME:?} --sdk-root \${SDKROOT:?} --framework-search-paths \\\"\${FRAMEWORK_SEARCH_PATHS:?}\\\" --header-search-paths \\\"\${HEADER_SEARCH_PATHS:?}\\\" --gcc-preprocessor-definitions \\\"\${GCC_PREPROCESSOR_DEFINITIONS:-}\\\" --configuration \${CONFIGURATION:?} \${FORCE_COLOR} \${ARCHS:?}\\n\\n# Release build\\n# cd \\\"\$PROJECT_DIR/../../\\\"\\n# /Users/franz/Documents/github_account/plusy-gamedex/node_modules/.bin/tauri ios build\\n'
+    NEW_SCRIPT='# Clear any restricted PATH and add common dev paths\\nexport PATH=\\\"\$PATH:/opt/homebrew/bin:/usr/local/bin:\$HOME/.cargo/bin\\\"\\n\\n# If you use NVM for node, add this too:\\n[ -s \\\"\$HOME/.nvm/nvm.sh\\\" ] \&\& \\\\. \\\"\$HOME/.nvm/nvm.sh\\\"\\n\\n# Development build\\n# In project directory first run: yarn tauri ios dev\\nyarn tauri ios xcode-script -v --platform \${PLATFORM_DISPLAY_NAME:?} --sdk-root \${SDKROOT:?} --framework-search-paths \\\"\${FRAMEWORK_SEARCH_PATHS:?}\\\" --header-search-paths \\\"\${HEADER_SEARCH_PATHS:?}\\\" --gcc-preprocessor-definitions \\\"\${GCC_PREPROCESSOR_DEFINITIONS:-}\\\" --configuration \${CONFIGURATION:?} \${FORCE_COLOR} \${ARCHS:?}\\n'
 
     # Use sed to replace the shellScript line
     # The '|' delimiter avoids conflict with path slashes.
@@ -61,7 +61,14 @@ if [ -f "$PBXPROJ" ]; then
         echo "✅ xcode-select is pointing to CommandLineTools."
         echo "🚀 Opening a new terminal to run 'yarn tauri ios dev'..."
         
-        osascript -e "tell application \"Terminal\" to do script \"cd '$(pwd)' && yarn tauri ios dev\""
+        # Detect local IP for real device dev (iPad needs to reach the Mac over LAN)
+        LOCAL_IP=$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null)
+        if [ -n "$LOCAL_IP" ]; then
+            osascript -e "tell application \"Terminal\" to do script \"cd '$(pwd)' && TAURI_DEV_HOST=$LOCAL_IP yarn tauri ios dev --host\""
+        else
+            echo "⚠️ Could not detect local IP. Falling back to localhost (simulator only)."
+            osascript -e "tell application \"Terminal\" to do script \"cd '$(pwd)' && yarn tauri ios dev\""
+        fi
 
         echo "💡 The Tauri dev server is starting in a separate window."
         echo "▶️  Once it is ready, press the 'Play' button in Xcode to build your provisional app."
