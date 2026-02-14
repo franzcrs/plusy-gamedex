@@ -91,7 +91,9 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
                     <input
                       type="text"
                       value={editForm.title}
-                      onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, title: e.target.value })
+                      }
                       className="table-input table-common-cell"
                     />
                   </td>
@@ -99,7 +101,9 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
                     <input
                       type="text"
                       value={editForm.remarks || ""}
-                      onChange={(e) => setEditForm({ ...editForm, remarks: e.target.value })}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, remarks: e.target.value })
+                      }
                       className="table-input table-common-cell"
                     />
                   </td>
@@ -107,7 +111,9 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
                     <input
                       type="text"
                       value={editForm.price || ""}
-                      onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, price: e.target.value })
+                      }
                       className="table-input table-common-cell"
                     />
                   </td>
@@ -135,19 +141,13 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
               ) : (
                 <>
                   <td>
-                    <p className="table-common-cell">
-                      {game.title}
-                    </p>
+                    <p className="table-common-cell">{game.title}</p>
                   </td>
                   <td>
-                    <p className="table-common-cell">
-                      {game.remarks || "-"}
-                    </p>
+                    <p className="table-common-cell">{game.remarks || "-"}</p>
                   </td>
                   <td>
-                    <p className="table-common-cell">
-                      {game.price || "-"}
-                    </p>
+                    <p className="table-common-cell">{game.price || "-"}</p>
                   </td>
                   <td>
                     <div className="action-buttons">
@@ -175,7 +175,7 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
           ))}
         </tbody>
       </table>
-      {showDeleteDialog &&
+      {showDeleteDialog && (
         <CommonModal
           title="Confirm Deletion"
           message="Are you sure you want to delete this game? This action cannot be undone."
@@ -183,7 +183,7 @@ export function GameTable({ games, onUpdate, onDelete }: GameTableProps) {
           onConfirm={confirmDelete}
           confirmText="Delete"
         />
-      }
+      )}
     </div>
   );
 }

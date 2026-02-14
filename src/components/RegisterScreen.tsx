@@ -18,7 +18,9 @@ interface FormRow {
 }
 
 export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
-  const [formRows, setFormRows] = useState<FormRow[]>([{ id: 1, title: "", remarks: "", price: "" }]);
+  const [formRows, setFormRows] = useState<FormRow[]>([
+    { id: 1, title: "", remarks: "", price: "" },
+  ]);
   const [games, setGames] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRemoveMode, setIsRemoveMode] = useState(false);
@@ -37,7 +39,7 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
     setIsLoading(false);
     setIsRemoveMode(false);
     setSelectedRows([]);
-  }
+  };
 
   const loadGames = async () => {
     try {
@@ -49,22 +51,29 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
   };
 
   const handleAddRow = () => {
-    const newId = Math.max(...formRows.map(r => r.id), 0) + 1;
-    setFormRows([...formRows, { id: newId, title: "", remarks: "", price: "" }]);
+    const newId = Math.max(...formRows.map((r) => r.id), 0) + 1;
+    setFormRows([
+      ...formRows,
+      { id: newId, title: "", remarks: "", price: "" },
+    ]);
   };
 
   const handleCopyRow = () => {
     if (formRows.length > 0) {
       const lastRow = formRows[formRows.length - 1];
-      const newId = Math.max(...formRows.map(r => r.id), 0) + 1;
+      const newId = Math.max(...formRows.map((r) => r.id), 0) + 1;
       setFormRows([...formRows, { ...lastRow, id: newId }]);
     }
   };
 
-  const handleFieldChange = (id: number, field: keyof FormRow, value: string) => {
-    setFormRows(formRows.map(row =>
-      row.id === id ? { ...row, [field]: value } : row
-    ));
+  const handleFieldChange = (
+    id: number,
+    field: keyof FormRow,
+    value: string
+  ) => {
+    setFormRows(
+      formRows.map((row) => (row.id === id ? { ...row, [field]: value } : row))
+    );
   };
 
   const handleRegister = async () => {
@@ -93,7 +102,7 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
 
   const handleRemove = () => {
     if (selectedRows.length > 0) {
-      setFormRows(formRows.filter(r => !selectedRows.includes(r.id)));
+      setFormRows(formRows.filter((r) => !selectedRows.includes(r.id)));
       setSelectedRows([]);
       setIsRemoveMode(false);
     }
@@ -142,22 +151,31 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
             <h3>Add New Games</h3>
             <div className="form-rows">
               {formRows.map((row) => (
-                <div key={row.id} className={`form-row ${isRemoveMode ? 'remove-mode' : ''}`}>
-                  <div className={`form-row-checkbox ${isRemoveMode ? "remove-mode" : ""}`}>
+                <div
+                  key={row.id}
+                  className={`form-row ${isRemoveMode ? "remove-mode" : ""}`}
+                >
+                  <div
+                    className={`form-row-checkbox ${
+                      isRemoveMode ? "remove-mode" : ""
+                    }`}
+                  >
                     <input
                       type="checkbox"
                       name="remove-row"
                       value={row.id}
                       onChange={(e) => {
                         const id = parseInt(e.target.value);
-                        setSelectedRows(prev =>
+                        setSelectedRows((prev) =>
                           prev.includes(id)
-                            ? prev.filter(r => r !== id)
+                            ? prev.filter((r) => r !== id)
                             : [...prev, id]
                         );
                       }}
                       checked={selectedRows.includes(row.id)}
-                      className={`checkbox-input ${isRemoveMode ? "display-checkbox" : ""}`}
+                      className={`checkbox-input ${
+                        isRemoveMode ? "display-checkbox" : ""
+                      }`}
                     />
                   </div>
                   <div className="form-row-fields">
@@ -165,20 +183,26 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
                       type="text"
                       placeholder="Title *"
                       value={row.title}
-                      onChange={(e) => handleFieldChange(row.id, "title", e.target.value)}
+                      onChange={(e) =>
+                        handleFieldChange(row.id, "title", e.target.value)
+                      }
                       required
                     />
                     <input
                       type="text"
                       placeholder="Remarks"
                       value={row.remarks}
-                      onChange={(e) => handleFieldChange(row.id, "remarks", e.target.value)}
+                      onChange={(e) =>
+                        handleFieldChange(row.id, "remarks", e.target.value)
+                      }
                     />
                     <input
                       type="text"
                       placeholder="Price"
                       value={row.price}
-                      onChange={(e) => handleFieldChange(row.id, "price", e.target.value)}
+                      onChange={(e) =>
+                        handleFieldChange(row.id, "price", e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -213,7 +237,11 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
                   title={isRemoveMode ? "Cancel remove" : "Remove row"}
                   aria-label={isRemoveMode ? "Cancel remove" : "Remove row"}
                 >
-                  {isRemoveMode ? <RotateCcw size={24} /> : <Trash2 size={24} />}
+                  {isRemoveMode ? (
+                    <RotateCcw size={24} />
+                  ) : (
+                    <Trash2 size={24} />
+                  )}
                 </button>
               </div>
               <div className="divider-line"></div>
@@ -222,11 +250,19 @@ export function RegisterScreen({ isOpen, onClose }: RegisterScreenProps) {
             <button
               className="register-button"
               onClick={isRemoveMode ? handleRemove : handleRegister}
-              disabled={isLoading ||
-                (!isRemoveMode && !formRows.some(row => row.title.trim())) ||
-                (isRemoveMode && (selectedRows.length === 0 || selectedRows.length === formRows.length))}
+              disabled={
+                isLoading ||
+                (!isRemoveMode && !formRows.some((row) => row.title.trim())) ||
+                (isRemoveMode &&
+                  (selectedRows.length === 0 ||
+                    selectedRows.length === formRows.length))
+              }
             >
-              {isRemoveMode ? "Remove" : isLoading ? "Registering..." : "Register"}
+              {isRemoveMode
+                ? "Remove"
+                : isLoading
+                ? "Registering..."
+                : "Register"}
             </button>
           </div>
 
