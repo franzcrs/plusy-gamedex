@@ -32,9 +32,9 @@ export function SearchResults({ games, isVisible }: SearchResultsProps) {
         <tbody>
           {games.map((game) => (
             <tr key={game.id}>
-              <td className="title-cell">{game.title}</td>
-              <td>{game.remarks || "-"}</td>
-              <td>{game.price || "-"}</td>
+              <td className="title-cell"><span className="cell-text">{game.title}</span></td>
+              <td><span className="cell-text">{game.remarks || "-"}</span></td>
+              <td><span className="cell-text">{game.price || "-"}</span></td>
             </tr>
           ))}
         </tbody>

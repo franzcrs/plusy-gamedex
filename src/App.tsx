@@ -65,16 +65,16 @@ function App() {
           e.preventDefault();
         }}
       >
-        <input
-          id="search-input"
-          ref={searchInputRef}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.currentTarget.value)}
-          placeholder="Enter a game title..."
-        />
-        <button type="button" className="icon-button">
-          <Search size={20} />
-        </button>
+        <div className="search-bar">
+          <input
+            id="search-input"
+            ref={searchInputRef}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.currentTarget.value)}
+            placeholder="Enter a game title..."
+          />
+          <Search size={20} className="search-icon" />
+        </div>
       </form>
 
       <SearchResults
