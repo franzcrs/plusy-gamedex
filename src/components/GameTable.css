@@ -9,6 +9,7 @@
   width: 100%;
   border-collapse: collapse;
   background-color: var(--surface-color);
+  table-layout: fixed;
 }
 
 .game-table thead {
@@ -38,6 +39,18 @@
   padding: 0.5rem;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-color);
+  position: relative;
+}
+
+.game-table td:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1.5rem;
+  background: linear-gradient(to right, transparent, var(--surface-color));
+  pointer-events: none;
 }
 
 .game-table tbody tr:last-child td {
@@ -66,6 +79,14 @@
 p.table-common-cell {
   padding: 0.5rem;
   align-content: center;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+p.table-common-cell::-webkit-scrollbar {
+  display: none;
 }
 
 .action-buttons {
