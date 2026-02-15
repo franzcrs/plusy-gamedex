@@ -6,7 +6,9 @@ interface FloatingActionButtonProps {
   onRegisterClick: () => void;
 }
 
-export function FloatingActionButton({ onRegisterClick }: FloatingActionButtonProps) {
+export function FloatingActionButton({
+  onRegisterClick,
+}: FloatingActionButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -15,8 +17,8 @@ export function FloatingActionButton({ onRegisterClick }: FloatingActionButtonPr
         setIsOpen(false);
       };
 
-      document.addEventListener('click', handleClickDocument);
-      return () => document.removeEventListener('click', handleClickDocument);
+      document.addEventListener("click", handleClickDocument);
+      return () => document.removeEventListener("click", handleClickDocument);
     }
   }, [isOpen]);
 
@@ -39,8 +41,18 @@ export function FloatingActionButton({ onRegisterClick }: FloatingActionButtonPr
           </button>
         </div>
       )}
-      <button className="fab-button icon-button" onClick={toggleMenu} aria-label="Menu">
-        <Plus size={38} style={{ transform: `rotate(${isOpen ? 45 : 0}deg)`, transition: 'transform 0.3s ease' }} />
+      <button
+        className="fab-button icon-button"
+        onClick={toggleMenu}
+        aria-label="Menu"
+      >
+        <Plus
+          size={38}
+          style={{
+            transform: `rotate(${isOpen ? 45 : 0}deg)`,
+            transition: "transform 0.3s ease",
+          }}
+        />
       </button>
     </div>
   );

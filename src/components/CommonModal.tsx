@@ -1,13 +1,13 @@
 import "./CommonModal.css";
 
 type CommonModalProps = {
-  title: string
-  message: string
-  onCancel: () => void
-  onConfirm: () => void
-  cancelText?: string
-  confirmText?: string
-}
+  title: string;
+  message: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+  cancelText?: string;
+  confirmText?: string;
+};
 
 function CommonModal(props: CommonModalProps) {
   return (
@@ -17,15 +17,15 @@ function CommonModal(props: CommonModalProps) {
         <p>{props.message}</p>
         <div className="modal-buttons">
           <button data-button-type="cancel" autoFocus onClick={props.onCancel}>
-            {props.cancelText || 'Cancel'}
+            {props.cancelText || "Cancel"}
           </button>
           <button onClick={props.onConfirm}>
-            {props.confirmText || 'Confirm'}
+            {props.confirmText || "Confirm"}
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default CommonModal
+export default CommonModal;
