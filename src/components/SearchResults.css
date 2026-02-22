@@ -46,17 +46,6 @@
   position: relative;
 }
 
-.results-table td::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 1.5rem;
-  background: linear-gradient(to right, transparent, var(--surface-color));
-  pointer-events: none;
-}
-
 .results-table tbody tr:last-child td {
   border-bottom: none;
 }
@@ -79,8 +68,21 @@
   display: block;
   white-space: nowrap;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 1.25rem),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 1.25rem),
+    transparent 100%
+  );
 }
 
 .cell-text::-webkit-scrollbar {
