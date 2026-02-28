@@ -2,6 +2,8 @@
 
 A desktop application for managing a game collection. Built with Tauri (Rust backend) and React (TypeScript frontend), it allows users to search, register, update, and delete games, within your private data.
 
+![](.github/assets/app-screenshot-2026-02-28.png)
+
 ## Features
 - Real-time search for games by title or remarks
 - Register multiple games at once via a form
