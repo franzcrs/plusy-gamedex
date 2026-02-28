@@ -174,7 +174,7 @@ https://v2.tauri.app/distribute/
 
 ## Publishing a New Release
 
-This project uses a [GitHub Actions workflow](.github/workflows/publish.yml) that automatically builds signed installers for all platforms and creates a draft GitHub release whenever changes are pushed to the `release` branch.
+This project uses the [Publish Release](.github/workflows/publish.yml) GitHub Actions workflow that automatically builds signed installers for all platforms and creates a draft GitHub release whenever changes are pushed to the `release` branch.
 
 ### Prerequisites (one-time GitHub secrets setup)
 
