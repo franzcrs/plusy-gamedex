@@ -44,7 +44,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: calc(1.5rem + env(safe-area-inset-top, 0px)) 2rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--surface-color);
 }
@@ -75,7 +75,7 @@
 .register-content {
   flex: 1;
   overflow-y: auto;
-  padding: 2rem;
+  padding: 2rem 2rem calc(2rem + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -223,7 +223,11 @@
   }
 
   .register-content {
-    padding: 1rem;
+    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .register-header {
+    padding: calc(1rem + env(safe-area-inset-top, 0px)) 1rem 1rem;
   }
 
   .registration-section,

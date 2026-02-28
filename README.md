@@ -113,7 +113,7 @@ yarn tauri icon
 **Build Command:**
 
 ```
-yarn tauri android build --apk true
+yarn android:build
 ```
 
 **Direct install in Android device:**
@@ -124,7 +124,7 @@ yarn tauri android build --apk true
 
 3. Run in a terminal compatible with `.sh` scripts
     ```
-    yarn run apk:install
+    yarn apk:install
     ```
 
 ### Preview on iOS Device or Simulator [Status: Tested]
@@ -161,7 +161,7 @@ In a terminal compatible with `.sh` scripts, run the following. This runs the ap
 The Xcode project will open and the dev server will start in a separate terminal.
 
 ```
-yarn run xcode:update
+yarn xcode:update
 ```
 
 Wait for the dev server to be ready, then in Xcode, select the target device and click the Play button.

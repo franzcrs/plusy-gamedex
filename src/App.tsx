@@ -12,6 +12,7 @@ function App() {
   const [searchResults, setSearchResults] = useState<Game[]>([]);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchResultsRef = useRef<HTMLDivElement>(null);
 
   // Focus the search input on component mount and window focus
   useEffect(() => {
@@ -47,6 +48,18 @@ function App() {
     performSearch();
   }, [searchQuery]);
 
+  // Scroll to results when they appear
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      setTimeout(() => {
+        searchResultsRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }, 100);
+    }
+  }, [searchResults]);
+
   const handleRegisterClick = () => {
     setIsRegisterOpen(true);
   };
@@ -65,19 +78,20 @@ function App() {
           e.preventDefault();
         }}
       >
-        <input
-          id="search-input"
-          ref={searchInputRef}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.currentTarget.value)}
-          placeholder="Enter a game title..."
-        />
-        <button type="button" className="icon-button">
-          <Search size={20} />
-        </button>
+        <div className="search-bar">
+          <input
+            id="search-input"
+            ref={searchInputRef}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.currentTarget.value)}
+            placeholder="Enter a game title..."
+          />
+          <Search size={20} className="search-icon" />
+        </div>
       </form>
 
       <SearchResults
+        ref={searchResultsRef}
         games={searchResults}
         isVisible={searchQuery.trim().length > 0}
       />

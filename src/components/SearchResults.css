@@ -22,6 +22,7 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  table-layout: fixed;
 }
 
 .results-table thead {
@@ -42,6 +43,7 @@
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-color);
+  position: relative;
 }
 
 .results-table tbody tr:last-child td {
@@ -60,6 +62,31 @@
 .title-cell {
   font-weight: 500;
   color: var(--primary-color);
+}
+
+.cell-text {
+  display: block;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 1.25rem),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 1.25rem),
+    transparent 100%
+  );
+}
+
+.cell-text::-webkit-scrollbar {
+  display: none;
 }
 
 .no-results {

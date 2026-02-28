@@ -31,6 +31,11 @@
 /* Reset and base styles */
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  background-color: var(--background-color);
 }
 
 body {
@@ -214,8 +219,22 @@ button[data-button-type="cancel"]:hover {
 
 /* Specific input styling */
 #search-input {
-  width: 250px;
+  width: 260px;
   min-width: 200px;
+  padding-right: 2.5rem;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  right: 0.75rem;
+  color: var(--primary-color);
+  pointer-events: none;
 }
 
 .icon-button {
@@ -321,5 +340,12 @@ a {
   .row {
     flex-direction: column;
     gap: 0.75rem;
+  }
+}
+
+/* Smartphone-specific styles */
+@media (max-width: 480px) {
+  .container {
+    padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
   }
 }
