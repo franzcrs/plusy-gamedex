@@ -219,7 +219,7 @@ button[data-button-type="cancel"]:hover {
 
 /* Specific input styling */
 #search-input {
-  width: 250px;
+  width: 260px;
   min-width: 200px;
   padding-right: 2.5rem;
 }
