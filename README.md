@@ -170,6 +170,82 @@ Wait for the dev server to be ready, then in Xcode, select the target device and
 **Source:**
 https://v2.tauri.app/distribute/
 
+## Publishing a New Release
+
+This project uses a [GitHub Actions workflow](.github/workflows/publish.yml) that automatically builds signed installers for all platforms and creates a draft GitHub release whenever changes are pushed to the `release` branch.
+
+### Prerequisites (one-time GitHub secrets setup)
+
+Go to your repository on GitHub → **Settings → Secrets and variables → Actions** and add the following secrets.
+
+**Android signing** — required to produce a signed APK:
+
+| Secret | How to get it |
+|---|---|
+| `ANDROID_KEYSTORE_BASE64` | Base64-encode your `.jks` file: `base64 -i android-key.jks \| pbcopy` |
+| `ANDROID_KEY_ALIAS` | The alias used when you created the keystore (e.g. `shared-key`) |
+| `ANDROID_KEY_PASSWORD` | The keystore/key password |
+
+> The workflow writes these into `src-tauri/gen/android/keystore.properties`, the file that `build.gradle.kts` already reads for signing.
+
+**macOS code signing** — required to produce a signed `.dmg`:
+
+| Secret | How to get it |
+|---|---|
+| `APPLE_CERTIFICATE` | Base64-encoded `.p12` exported from Keychain Access: `base64 -i cert.p12 \| pbcopy` |
+| `APPLE_CERTIFICATE_PASSWORD` | Password set when exporting the `.p12` |
+| `APPLE_SIGNING_IDENTITY` | Full identity string from the cert, e.g. `Apple Development: you@email.com (TEAMID)` |
+| `APPLE_ID` | Your Apple ID email (only needed for notarization) |
+| `APPLE_PASSWORD` | App-specific password from [appleid.apple.com](https://appleid.apple.com) (notarization only) |
+| `APPLE_TEAM_ID` | Your Apple Developer Team ID (notarization only) |
+
+> If macOS secrets are absent the DMGs will still be built but unsigned. macOS Gatekeeper will block unsigned apps on other machines.
+
+### Release steps
+
+1. **Stabilize on `develop`** — merge all features and verify the app is working.
+
+2. **Checkout `release` and merge `develop` into it**:
+   ```bash
+   git checkout release
+   git merge develop
+   ```
+
+3. **Bump the version and update the changelog**:
+   - Set the new version in `src-tauri/tauri.conf.json` (this becomes the release tag, e.g. `0.2.0` → tag `v0.2.0`).
+   - Add a section to `CHANGELOG.md` for this version.
+   - Commit the changed files:
+     ```bash
+     git add src-tauri/tauri.conf.json CHANGELOG.md
+     git commit -m "chore: release v0.2.0"
+     ```
+
+4. **Push `release` to trigger the workflow**:
+   ```bash
+   git push origin release
+   ```
+   All four platform builds run in parallel. Monitor progress in the **Actions** tab on GitHub.
+
+5. **Publish the draft release on GitHub**:
+   - Once all CI jobs pass, go to **Releases** on GitHub.
+   - Open the draft, verify the four assets are attached (2 × `.dmg`, 1 × Windows installer, 1 × `.apk`).
+   - Copy the relevant section from `CHANGELOG.md` into the release notes.
+   - Click **Publish release**.
+
+6. **Merge `release` into `main`** (so `main` always reflects the latest published version):
+   ```bash
+   git checkout main
+   git merge release
+   git push origin main
+   ```
+
+7. **Sync the version bump back to `develop`**:
+   ```bash
+   git checkout develop
+   git merge main
+   git push origin develop
+   ```
+
 ## Development
 - **Frontend**: Maintain concerns separted
   - Add components and their style sheets in [`src/components`](src/components)

@@ -1,0 +1,284 @@
+name: publish
+
+on:
+  workflow_dispatch: # Allows manual triggering
+  push:
+    branches:
+      - release # Triggered whenever you push to the 'release' branch
+
+jobs:
+  # Creates the draft GitHub release and outputs its ID and tag for all build jobs to upload into
+  create-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create.outputs.result }}
+      release_tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: get version tag
+        id: tag
+        run: echo "tag=v$(jq -r '.version' src-tauri/tauri.conf.json)" >> $GITHUB_OUTPUT
+
+      # If a draft release with this tag already exists (e.g. from a previous failed run),
+      # delete it and its tag so the run starts clean. Fails if the release is already published
+      # to prevent accidentally overwriting a live release.
+      - name: create draft GitHub release
+        id: create
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = '${{ steps.tag.outputs.tag }}';
+
+            // Check if a release for this tag already exists
+            let existing;
+            try {
+              const { data } = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: tag,
+              });
+              existing = data;
+            } catch (e) {
+              if (e.status !== 404) throw e;
+              // 404 = release does not exist yet, proceed normally
+            }
+
+            if (existing) {
+              if (!existing.draft) {
+                throw new Error(`Release ${tag} is already published. Bump the version before re-releasing.`);
+              }
+              // Delete the draft and its tag so this run starts clean
+              await github.rest.repos.deleteRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: existing.id,
+              });
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/${tag}`,
+              });
+              console.log(`Deleted existing draft release and tag ${tag} — starting fresh.`);
+            }
+
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: `PlusY Gamedex ${tag}`,
+              body: 'See the assets below to download the installers.',
+              draft: true,
+              prerelease: false
+            });
+            return data.id;
+
+  # macOS Apple Silicon .dmg
+  publish-macos-arm:
+    needs: create-release
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "yarn"
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: install frontend dependencies
+        run: yarn install
+
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # macOS code signing — see README "Publishing Prerequisites" for setup steps
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          # Optional: notarization (required for Gatekeeper on other machines)
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        with:
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+          args: "--bundles dmg --target aarch64-apple-darwin"
+
+  # macOS Intel .dmg
+  publish-macos-intel:
+    needs: create-release
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "yarn"
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: install frontend dependencies
+        run: yarn install
+
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        with:
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+          args: "--bundles dmg --target x86_64-apple-darwin"
+
+  # Windows installer (.msi / .exe)
+  publish-windows:
+    needs: create-release
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "yarn"
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: install frontend dependencies
+        run: yarn install
+
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+
+  # Android APK (signed)
+  publish-android:
+    needs: create-release
+    permissions:
+      contents: write
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "21"
+
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: install NDK
+        run: |
+          sdkmanager --install "ndk;29.0.14206865"
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/29.0.14206865" >> $GITHUB_ENV
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "yarn"
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: install frontend dependencies
+        run: yarn install
+
+      # Generates src-tauri/gen/android (gitignored, must be regenerated in CI)
+      - name: initialize Android project
+        run: yarn tauri android init
+
+      - name: make gradlew executable
+        run: chmod +x src-tauri/gen/android/gradlew
+
+      # Replicate the patches from build-android.sh using Linux-compatible sed (no trailing '')
+      - name: patch AndroidManifest.xml
+        run: |
+          MANIFEST="src-tauri/gen/android/app/src/main/AndroidManifest.xml"
+          if ! grep -q 'android:windowSoftInputMode' "$MANIFEST"; then
+            sed -i 's|android:launchMode="singleTask"|android:launchMode="singleTask"\n            android:windowSoftInputMode="adjustResize"|' "$MANIFEST"
+          fi
+
+      - name: patch MainActivity.kt
+        run: |
+          JAVA_ROOT="src-tauri/gen/android/app/src/main/java"
+          MAINACTIVITY=$(find "$JAVA_ROOT" -name "MainActivity.kt" -maxdepth 5 | head -n 1)
+          if ! grep -q 'SystemBarStyle' "$MAINACTIVITY"; then
+            sed -i 's|import androidx.activity.enableEdgeToEdge|import androidx.activity.SystemBarStyle\nimport androidx.activity.enableEdgeToEdge|' "$MAINACTIVITY"
+            sed -i 's|enableEdgeToEdge()|enableEdgeToEdge(\n      statusBarStyle = SystemBarStyle.light(\n        android.graphics.Color.TRANSPARENT,\n        android.graphics.Color.TRANSPARENT\n      )\n    )|' "$MAINACTIVITY"
+          fi
+
+      # Writes keystore.properties into the Gradle project root (src-tauri/gen/android/).
+      # build.gradle.kts reads this file for signing. The .jks file is placed at repo root.
+      # Secret ANDROID_KEY_PASSWORD is used for both keyPassword and storePassword,
+      # matching the single-password format in build.gradle.kts.
+      - name: setup Android signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          KEYSTORE_PATH="$(pwd)/android-key.jks"
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE_PATH"
+          echo "password=$ANDROID_KEY_PASSWORD" > src-tauri/gen/android/keystore.properties
+          echo "keyAlias=$ANDROID_KEY_ALIAS" >> src-tauri/gen/android/keystore.properties
+          echo "storeFile=$KEYSTORE_PATH" >> src-tauri/gen/android/keystore.properties
+
+      - name: build Android APK
+        run: yarn tauri android build --apk true
+
+      - name: upload APK to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          APK=$(find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" | head -n 1)
+          gh release upload ${{ needs.create-release.outputs.release_tag }} "$APK" --clobber
