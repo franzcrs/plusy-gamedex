@@ -321,18 +321,10 @@ jobs:
           base64 -d <<< "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" > $RUNNER_TEMP/keystore.jks
           echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
 
-      - name: build Android APK
-        run: yarn tauri android build --apk true
-
-      - name: upload APK to release
+      - uses: tauri-apps/tauri-action@e839bb55b23d177d8cb537c2e10f41decb2d1089
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_ID: ${{ needs.create-release.outputs.release_id }}
-        run: |
-          APK=$(find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" | head -n 1)
-          APK_NAME=$(basename "$APK")
-          curl -sSf \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Content-Type: application/vnd.android.package-archive" \
-            --data-binary "@$APK" \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=$APK_NAME"
+        with:
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+          mobile: android
+          args: --apk true
