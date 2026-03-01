@@ -1,0 +1,30 @@
+{
+  "name": "plusy-gamedex-api",
+  "version": "1.0.0",
+  "description": "Cloud API for PlusY Gamedex - Manages games.json, storage versioning, and authentication",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "cloud-api",
+    "games",
+    "gcs",
+    "firebase"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/storage": "^7.17.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
