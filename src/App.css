@@ -1,18 +1,25 @@
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
-
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafb);
-}
+/* CSS Variables for consistent theming */
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  --primary-color: #c33974;
+  --text-color: #211e1f;
+  --text-color-opacity: rgba(33, 30, 31, 0.3);
+  --primary-color-opacity: rgba(195, 57, 116, 0.05);
+  --primary-color-focus: rgba(195, 57, 117, 0.17);
+  --background-color: #fefefe;
+  --surface-color: #ffffff;
+  --border-color: rgba(33, 30, 31, 0.15);
+  --border-hover: rgba(33, 30, 31, 0.25);
+  --checkbox-size: 20px;
+  --elem-min-width: 46px;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
-  line-height: 24px;
+  line-height: 1.5;
   font-weight: 400;
 
-  color: #0f0f0f;
-  background-color: #f6f6f6;
+  color: var(--text-color);
+  background-color: var(--background-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -21,96 +28,324 @@
   -webkit-text-size-adjust: 100%;
 }
 
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  background-color: var(--background-color);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-color);
+}
+
+p {
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+a:focus {
+  outline: 2px solid var(--primary-color-opacity);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
 .container {
   margin: 0;
-  padding-top: 10vh;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
+  min-height: 100vh;
+  gap: 2rem;
 }
 
 .row {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/* Logo styling */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 0.3s ease;
 }
 
-a:hover {
-  color: #535bf2;
+.logo:hover {
+  filter: drop-shadow(0 0 1.5em rgba(195, 57, 116, 0.4));
 }
 
-h1 {
-  text-align: center;
-}
-
+/* Minimal form elements styling */
 input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+button,
+textarea,
+select {
+  margin: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 400;
   font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  color: var(--text-color);
+  background-color: var(--surface-color);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  height: 44px;
+  max-height: 44px;
+  min-width: var(--elem-min-width);
+  box-sizing: border-box;
+}
+
+/* Minimal focus styles */
+input:focus,
+button:focus,
+textarea:focus,
+select:focus,
+[tabindex]:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px var(--primary-color-focus);
+}
+
+input:is([type="radio"], [type="checkbox"]) {
+  padding: 0px;
+  min-width: var(--checkbox-size);
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  cursor: pointer;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+input:is([type="radio"], [type="checkbox"]):active {
+  transform: scale(0.92);
+}
+
+input:is([type="radio"], [type="checkbox"]):checked {
+  border: none;
+  background-color: var(--primary-color);
+  /* SVG Tick */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E"),
+    /* Shine: A white overlay with low opacity on the top 50% */
+      linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0) 50%
+      );
+  background-repeat: no-repeat;
+  background-position: center;
+  /* First size is for tick, 'cover' is for shine */
+  background-size: 90% 90%, cover;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 button {
   cursor: pointer;
+  background-color: var(--primary-color);
+  font-weight: 500;
+  border-color: var(--primary-color);
+  color: var(--surface-color);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease, box-shadow 0.15s ease;
 }
 
 button:hover {
-  border-color: #396cd8;
+  background-color: var(--primary-color-opacity);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: scale(1.02);
+  box-shadow: none;
 }
+
 button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
+  transform: scale(0.96);
 }
 
+button[data-button-type="cancel"] {
+  background-color: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--surface-color);
+}
+
+button[data-button-type="cancel"]:hover {
+  background-color: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--surface-color);
+}
+
+/* Specific input styling */
+#search-input {
+  width: 260px;
+  min-width: 200px;
+  padding-right: 2.5rem;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  right: 0.75rem;
+  color: var(--primary-color);
+  pointer-events: none;
+}
+
+.icon-button {
+  padding: 0.25rem;
+  max-width: var(--elem-min-width);
+}
+
+/* Text selection */
+::selection {
+  background-color: rgba(195, 57, 116, 0.2);
+}
+
+::-moz-selection {
+  background-color: rgba(195, 57, 116, 0.2);
+}
+
+/* Minimal scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Remove focus ring for mouse users, keep for keyboard */
+.js-focus-visible input:focus:not(.focus-visible),
+.js-focus-visible button:focus:not(.focus-visible),
+.js-focus-visible textarea:focus:not(.focus-visible),
+.js-focus-visible select:focus:not(.focus-visible) {
+  box-shadow: none;
+  border-color: var(--border-color);
+}
+
+/* Seamless transitions for all interactive elements */
 input,
-button {
-  outline: none;
+textarea,
+select,
+a {
+  transition: all 0.15s ease;
 }
 
-#greet-input {
-  margin-right: 5px;
+/* Minimal spacing and layout */
+.container > * {
+  margin-bottom: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
+.container > *:last-child {
+  margin-bottom: 0;
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
   :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
+    --border-color: rgba(33, 30, 31, 0.6);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 1rem;
+    gap: 1.5rem;
   }
 
-  a:hover {
-    color: #24c8db;
+  .logo {
+    height: 4em;
+    padding: 1em;
   }
 
   input,
   button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
   }
-  button:active {
-    background-color: #0f0f0f69;
+
+  #greet-input {
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 0.5rem;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* Smartphone-specific styles */
+@media (max-width: 480px) {
+  .container {
+    padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
   }
 }

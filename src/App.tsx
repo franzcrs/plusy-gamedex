@@ -1,49 +1,103 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { useState, useEffect, useRef } from "react";
+import { Search } from "lucide-react";
+import { gameService } from "./services/gameService";
+import { Game } from "./types/game";
+import { FloatingActionButton } from "./components/FloatingActionButton";
+import { RegisterScreen } from "./components/RegisterScreen";
+import { SearchResults } from "./components/SearchResults";
 import "./App.css";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Game[]>([]);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchResultsRef = useRef<HTMLDivElement>(null);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  // Focus the search input on component mount and window focus
+  useEffect(() => {
+    searchInputRef.current?.focus();
+
+    const handleWindowFocus = () => {
+      searchInputRef.current?.focus();
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleWindowFocus);
+    };
+  }, []);
+
+  // Real-time search - trigger search on every keystroke
+  useEffect(() => {
+    const performSearch = async () => {
+      if (searchQuery.trim()) {
+        try {
+          const results = await gameService.searchGames(searchQuery);
+          setSearchResults(results);
+        } catch (error) {
+          console.error("Search failed:", error);
+          setSearchResults([]);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    };
+
+    performSearch();
+  }, [searchQuery]);
+
+  // Scroll to results when they appear
+  useEffect(() => {
+    if (searchResults.length > 0) {
+      setTimeout(() => {
+        searchResultsRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }, 100);
+    }
+  }, [searchResults]);
+
+  const handleRegisterClick = () => {
+    setIsRegisterOpen(true);
+  };
+
+  const handleRegisterClose = () => {
+    setIsRegisterOpen(false);
+  };
 
   return (
     <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
+      <h1>Welcome to the Gamedex</h1>
 
       <form
         className="row"
         onSubmit={(e) => {
           e.preventDefault();
-          greet();
         }}
       >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
+        <div className="search-bar">
+          <input
+            id="search-input"
+            ref={searchInputRef}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.currentTarget.value)}
+            placeholder="Enter a game title..."
+          />
+          <Search size={20} className="search-icon" />
+        </div>
       </form>
-      <p>{greetMsg}</p>
+
+      <SearchResults
+        ref={searchResultsRef}
+        games={searchResults}
+        isVisible={searchQuery.trim().length > 0}
+      />
+
+      <FloatingActionButton onRegisterClick={handleRegisterClick} />
+      <RegisterScreen isOpen={isRegisterOpen} onClose={handleRegisterClose} />
     </main>
   );
 }

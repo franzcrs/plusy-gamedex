@@ -23,3 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 commit-msg.txt
+.env
+*.jks
+keystore.properties
+*.p12
+
+# Mobile build files
+src-tauri/gen/android
+src-tauri/gen/apple
