@@ -15,16 +15,19 @@ router.get('/', async (req, res) => {
       versions: true,
     });
 
+    // Sort by generation (newest first)
+    files.sort((a, b) => Number(b.metadata.generation) - Number(a.metadata.generation));
+
+    // Find the highest generation to mark as latest
+    const latestGeneration = files.length > 0 ? files[0].metadata.generation : null;
+
     const versions = files.map((file) => ({
       name: file.name,
       generation: file.metadata.generation,
       size: file.metadata.size,
       updated: file.metadata.updated,
-      isLatest: file.metadata.generation === file.metadata.metageneration,
+      isLatest: file.metadata.generation === latestGeneration,
     }));
-
-    // Sort by generation (newest first)
-    versions.sort((a, b) => Number(b.generation) - Number(a.generation));
 
     res.json({ versions, total: versions.length });
   } catch (error) {

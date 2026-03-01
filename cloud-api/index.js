@@ -1,6 +1,7 @@
 require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const { Storage } = require('@google-cloud/storage');
 const admin = require('firebase-admin');
 
@@ -10,6 +11,17 @@ const storage = new Storage();
 // Initialize Firebase Admin
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// 📍 RATE LIMITING CONFIGURATION - Protect against abuse
+// ═══════════════════════════════════════════════════════════════════
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
 });
 
 // ═══════════════════════════════════════════════════════════════════
@@ -34,8 +46,8 @@ app.get('/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
-// Protected routes
-app.use('/api', verifyToken);
+// Protected routes with rate limiting
+app.use('/api', apiLimiter, verifyToken);
 app.use('/api/games', require('./routes/games'));
 app.use('/api/versions', require('./routes/versions'));
 

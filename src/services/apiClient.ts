@@ -139,7 +139,7 @@ class ApiClient {
         return { data: null, error: `Upload failed: HTTP ${response.status}` };
       }
 
-      return { data: undefined, error: null };
+      return { data: null, error: null };
     } catch (error) {
       return { data: null, error: (error as Error).message };
     }
