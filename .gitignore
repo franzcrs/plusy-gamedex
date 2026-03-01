@@ -30,3 +30,7 @@ keystore.properties
 # Mobile build files
 src-tauri/gen/android
 src-tauri/gen/apple
+
+# Cloud API sensitive files
+firebase-service-account.json
+*-service-account.json
