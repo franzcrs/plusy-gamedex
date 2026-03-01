@@ -4,9 +4,10 @@ FROM node:20-slim
 # Create and change to the app directory
 WORKDIR /usr/src/app
 
-# Copy package files and install dependencies using Yarn
-COPY package.json yarn.lock ./
-RUN yarn install --production --frozen-lockfile
+# Copy package files and install dependencies
+# Use package.json only; yarn.lock will be generated if not present
+COPY package.json ./
+RUN npm install --omit=dev
 
 # Copy local code to the container image
 COPY . .
