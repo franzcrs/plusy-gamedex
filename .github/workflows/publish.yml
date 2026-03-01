@@ -103,7 +103,7 @@ jobs:
       - name: install frontend dependencies
         run: yarn install
 
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@e839bb55b23d177d8cb537c2e10f41decb2d1089
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # macOS code signing — see README "Publishing Prerequisites" for setup steps
@@ -117,6 +117,7 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           args: "--bundles dmg --target aarch64-apple-darwin"
+          releaseAssetNamePattern: "PlusY_Gamedex_[version]_[arch][setup][ext]"
 
   # macOS Intel .dmg
   publish-macos-intel:
@@ -146,7 +147,7 @@ jobs:
       - name: install frontend dependencies
         run: yarn install
 
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@e839bb55b23d177d8cb537c2e10f41decb2d1089
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
@@ -158,6 +159,7 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           args: "--bundles dmg --target x86_64-apple-darwin"
+          releaseAssetNamePattern: "PlusY_Gamedex_[version]_[arch][setup][ext]"
 
   # Windows installer (.msi / .exe)
   publish-windows:
@@ -185,11 +187,12 @@ jobs:
       - name: install frontend dependencies
         run: yarn install
 
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@e839bb55b23d177d8cb537c2e10f41decb2d1089
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
+          releaseAssetNamePattern: "PlusY_Gamedex_[version]_[arch][setup][ext]"
 
   # Android APK (signed)
   publish-android:
@@ -321,6 +324,23 @@ jobs:
           base64 -d <<< "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" > $RUNNER_TEMP/keystore.jks
           echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
 
+      # Alternative for building and uploading the APK without using tauri-action. Uploads the APK as a release asset using the GitHub API.
+      # - name: build Android APK
+      #   run: yarn tauri android build --apk true
+
+      # - name: upload APK to release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     RELEASE_ID: ${{ needs.create-release.outputs.release_id }}
+      #   run: |
+      #     APK=$(find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" | head -n 1)
+      #     APK_NAME=$(basename "$APK")
+      #     curl -sSf \
+      #       -H "Authorization: Bearer $GITHUB_TOKEN" \
+      #       -H "Content-Type: application/vnd.android.package-archive" \
+      #       --data-binary "@$APK" \
+      #       "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=$APK_NAME"
+
       - uses: tauri-apps/tauri-action@e839bb55b23d177d8cb537c2e10f41decb2d1089
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -328,3 +348,4 @@ jobs:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           mobile: android
           args: --apk true
+          releaseAssetNamePattern: "PlusY_Gamedex_[version]_[arch][setup][ext]"
