@@ -327,6 +327,12 @@ jobs:
       - name: upload APK to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ needs.create-release.outputs.release_id }}
         run: |
           APK=$(find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" | head -n 1)
-          gh release upload ${{ needs.create-release.outputs.release_tag }} "$APK" --clobber
+          APK_NAME=$(basename "$APK")
+          curl -sSf \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/vnd.android.package-archive" \
+            --data-binary "@$APK" \
+            "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=$APK_NAME"
