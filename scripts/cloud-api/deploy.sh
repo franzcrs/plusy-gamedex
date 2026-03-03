@@ -9,7 +9,7 @@ set -e
 
 # Load environment variables from .env file in root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 if [ -f "$ROOT_DIR/.env" ]; then
   export $(grep -v '^#' "$ROOT_DIR/.env" | xargs)
