@@ -9,15 +9,15 @@ set -e
 #   - Run again if you need to add new domains to CORS policy
 # ═══════════════════════════════════════════════════════════════════
 
-# Load environment variables from .env file in root
+# Load environment variables from .env file
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+CLOUD_API_DIR="$(cd "$SCRIPT_DIR/../../cloud-api" && pwd)"
 
-if [ -f "$ROOT_DIR/.env" ]; then
-  export $(grep -v '^#' "$ROOT_DIR/.env" | xargs)
+if [ -f "$CLOUD_API_DIR/.env" ]; then
+  export $(grep -v '^#' "$CLOUD_API_DIR/.env" | xargs)
 else
-  echo "❌ .env file not found at $ROOT_DIR/.env"
-  echo "   Please create one based on .env.example"
+  echo "❌ .env file not found at $CLOUD_API_DIR/.env"
+  echo "   Please create one based on cloud-api/.env.example"
   exit 1
 fi
 

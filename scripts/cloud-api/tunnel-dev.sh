@@ -7,16 +7,15 @@
 # When tunnel stops: $PERSONAL_DOMAIN → Cloud Run (via DNS)
 # ═══════════════════════════════════════════════════════════════════
 
-# Get the project root directory (two levels up from this script)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-
 # Load environment variables from .env file
-if [ -f "$PROJECT_ROOT/.env" ]; then
-  export $(grep -v '^#' "$PROJECT_ROOT/.env" | grep -v '^$' | xargs)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLOUD_API_DIR="$(cd "$SCRIPT_DIR/../../cloud-api" && pwd)"
+
+if [ -f "$CLOUD_API_DIR/.env" ]; then
+  export $(grep -v '^#' "$CLOUD_API_DIR/.env" | grep -v '^$' | xargs)
 else
-  echo "❌ .env file not found at $PROJECT_ROOT/.env"
-  echo "   Please copy .env.example to .env and configure your settings."
+  echo "❌ .env file not found at $CLOUD_API_DIR/.env"
+  echo "   Please create one based on cloud-api/.env.example"
   exit 1
 fi
 
