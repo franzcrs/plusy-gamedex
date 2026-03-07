@@ -40,7 +40,6 @@ cat <<EOF > /tmp/cors-config.json
       "http://localhost:5173",
       "https://$PERSONAL_DOMAIN",
       "https://$CLIENT_DOMAIN",
-      "https://www.taikentokyo.com"
     ],
     "method": ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
     "responseHeader": ["Content-Type", "Authorization", "x-goog-resumable"],
