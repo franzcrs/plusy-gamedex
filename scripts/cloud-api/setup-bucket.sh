@@ -39,7 +39,7 @@ cat <<EOF > /tmp/cors-config.json
     "origin": [
       "http://localhost:5173",
       "https://$PERSONAL_DOMAIN",
-      "https://$CLIENT_DOMAIN",
+      "https://$CLIENT_DOMAIN"
     ],
     "method": ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
     "responseHeader": ["Content-Type", "Authorization", "x-goog-resumable"],
