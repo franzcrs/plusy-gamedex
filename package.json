@@ -8,10 +8,10 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "android:build": "sh build-android.sh",
-    "apk:install": "sh install-apk.sh",
-    "xcode:update": "sh update-xcode.sh",
-    "licenses:update": "node update-licenses.js"
+    "android:build": "sh scripts/build-android.sh",
+    "apk:install": "sh scripts/install-apk.sh",
+    "xcode:update": "sh scripts/update-xcode.sh",
+    "licenses:update": "node scripts/update-licenses.js"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
