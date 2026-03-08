@@ -13,6 +13,9 @@ admin.initializeApp({
   credential: admin.credential.applicationDefault(),
 });
 
+// Trust the first proxy (required for Cloud Run and local dev with tunnels)
+app.set('trust proxy', 1);
+
 // ═══════════════════════════════════════════════════════════════════
 // 📍 RATE LIMITING CONFIGURATION - Protect against abuse
 // ═══════════════════════════════════════════════════════════════════

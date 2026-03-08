@@ -1,13 +1,17 @@
-# Use official lightweight Node.js image
-FROM node:20-slim
-
-# Create and change to the app directory
+# Stage 1: Install dependencies
+FROM node:20-alpine AS builder
 WORKDIR /usr/src/app
 
 # Copy package files and install dependencies
-# Use package.json only; yarn.lock will be generated if not present
-COPY package.json ./
-RUN npm install --omit=dev
+COPY package.json yarn.lock ./
+RUN yarn install --production --frozen-lockfile
+
+# Stage 2: Run with distroless (minimal attack surface, regularly patched by Google)
+FROM gcr.io/distroless/nodejs20-debian12
+
+# Create and change to the app directory
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app/node_modules ./node_modules
 
 # Copy local code to the container image
 COPY . .
@@ -16,4 +20,4 @@ COPY . .
 ENV PORT=8080
 
 # Run the web service on container startup
-CMD ["node", "index.js"]
+CMD ["index.js"]
