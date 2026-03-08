@@ -51,9 +51,9 @@ app.get("/health", (req, res) => {
 });
 
 // Protected routes with rate limiting
-app.use("/api", apiLimiter, verifyToken);
+app.use("/api", apiLimiter);
 app.use("/api/games", require("./routes/games"));
-app.use("/api/versions", require("./routes/versions"));
+app.use("/api/versions", verifyToken, require("./routes/versions"));
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

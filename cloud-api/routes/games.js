@@ -1,5 +1,6 @@
 const express = require('express');
 const { Storage } = require('@google-cloud/storage');
+const { verifyToken } = require('../middleware/auth');
 
 const router = express.Router();
 const storage = new Storage();
@@ -26,7 +27,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/games/upload-url - Get a signed URL for uploading
-router.post('/upload-url', async (req, res) => {
+router.post('/upload-url', verifyToken, async (req, res) => {
   try {
     const file = bucket.file(GAMES_FILE);
 
