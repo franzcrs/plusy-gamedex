@@ -11,7 +11,10 @@
     "android:build": "sh scripts/build-android.sh",
     "apk:install": "sh scripts/install-apk.sh",
     "xcode:update": "sh scripts/update-xcode.sh",
-    "licenses:update": "node scripts/update-licenses.js"
+    "licenses:update": "node scripts/update-licenses.js",
+    "cloud:tunnel": "sh scripts/cloud-api/tunnel-dev.sh",
+    "cloud:setup-bucket": "sh scripts/cloud-api/setup-bucket.sh",
+    "cloud:deploy": "sh scripts/cloud-api/deploy.sh"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
